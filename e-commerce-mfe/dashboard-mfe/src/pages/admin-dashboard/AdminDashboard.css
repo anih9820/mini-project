@@ -1,0 +1,75 @@
+.main-content {
+  flex-grow: 1;
+  background-color: rgb(241, 239, 239);
+  padding: 20px 40px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+}
+
+.download-section,
+.upload-section {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  background-color: #ffffff;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.download-section {
+  align-items: flex-start;
+}
+
+.upload-section {
+  align-items: flex-start;
+}
+
+.download-csv-btn,
+.upload-csv-btn {
+  background-color: #1e88e5;
+  color: white;
+  padding: 10px 16px;
+  border: none;
+  border-radius: 5px;
+  font-size: 0.9rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s, transform 0.2s;
+}
+
+.download-csv-btn:hover,
+.upload-csv-btn:hover {
+  background-color: #1565c0;
+  transform: scale(1.05);
+}
+
+input[type="file"] {
+  padding: 10px;
+  font-size: 0.9rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background-color: white;
+  color: #333;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+@media (max-width: 768px) {
+  .main-content {
+      padding: 10px 20px;
+  }
+
+  .download-section,
+  .upload-section {
+      padding: 15px;
+  }
+
+  .download-csv-btn,
+  .upload-csv-btn {
+      width: 100%;
+      padding: 12px;
+  }
+}

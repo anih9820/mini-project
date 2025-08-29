@@ -1,0 +1,4 @@
+{
+  "productServiceBaseURL": "http://localhost:8090",
+  "cartServiceBaseURL": "http://localhost:8088"
+}

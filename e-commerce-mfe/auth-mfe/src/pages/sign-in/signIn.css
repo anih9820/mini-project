@@ -1,0 +1,118 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  justify-content: center;
+}
+
+.signin-container {
+    height: 100vh;
+    display: flex;
+  }
+
+  .left-column {
+    flex: 1;
+    background-image: url('./loginbg_3.jpg');
+    background-size: cover;
+    background-position: center;
+  }
+
+  .right-column {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, rgba(161, 160, 160, 0.8), rgba(15, 15, 15, 0.9));
+  }
+
+  
+  .signin-card {
+    background: #ffffff;
+    padding: 2.5rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 400px;
+    margin-right: 70px;
+  }
+  
+  .logo-container {
+    text-align: center;
+    margin-bottom: 2rem;
+  }
+  
+  .logo {
+    width: 120px;
+    height: auto;
+  }
+  
+  .signin-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+  
+  .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  
+  .form-input {
+    padding: 12px;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    font-size: 1rem;
+    transition: border-color 0.3s ease;
+  }
+  
+  .form-input:focus {
+    outline: none;
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+  }
+  
+  .signin-button {
+    background-color: #3b82f6;
+    color: white;
+    padding: 12px;
+    border: none;
+    border-radius: 6px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .signin-button:hover {
+    background-color: #2563eb;
+  }
+  
+  .signin-button:disabled {
+    background-color: #94a3b8;
+    cursor: not-allowed;
+  }
+  
+  .forgot-password {
+    text-align: center;
+    color: #3b82f6;
+    text-decoration: none;
+    font-size: 0.875rem;
+    transition: color 0.3s ease;
+  }
+  
+  .forgot-password:hover {
+    color: #2563eb;
+  }
+  
+  .error-message {
+    color: #ef4444;
+    font-size: 0.875rem;
+  }
+  
+  @media (max-width: 640px) {
+    .signin-card {
+      margin: 1rem;
+      padding: 1.5rem;
+    }
+  }

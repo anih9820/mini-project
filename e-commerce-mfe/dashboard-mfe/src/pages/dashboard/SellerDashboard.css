@@ -1,0 +1,169 @@
+
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  color: #333;
+  background-color: #f4f4f9;
+}
+
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+  padding: 0 20px;
+}
+
+.header h2 {
+  font-size: 1.75rem;
+  font-weight: bold;
+  color: #2d3748;
+}
+
+.add-product-btn {
+  background-color: #27ae60;
+  color: white;
+  display: flex;
+  align-items: center;
+  padding: 10px 16px;
+  border: none;
+  border-radius: 5px;
+  font-size: 0.9rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: transform 0.2s, opacity 0.3s;
+}
+
+.add-product-btn .icon {
+  margin-right: 10px;
+}
+
+.add-product-btn:hover {
+  transform: scale(1.05);
+  opacity: 0.8;
+}
+
+
+.container {
+  display: flex;
+  flex-direction: row;
+  height: 100vh;
+  overflow: hidden;
+}
+
+
+.sidebar {
+  width: 250px;
+  background-color:rgb(255, 255, 255);
+  color: white;
+  padding: 20px;
+  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+}
+
+
+.main-content {
+  flex-grow: 1;
+  background-color:rgb(241, 239, 239);
+  padding: 20px;
+  overflow-y: auto;
+  background-size: cover;
+  background-position: center;
+}
+
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 20px 0;
+}
+
+table th,
+table td {
+  border: 1px solid #ddd;
+  padding: 12px;
+  text-align: left;
+}
+
+table th {
+  background-color: #2d3748;
+  color: white;
+  font-weight: bold;
+}
+
+table tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+table tr:hover {
+  background-color: #f1f1f1;
+}
+
+@media (max-width: 768px) {
+  .container {
+    flex-direction: column;
+  }
+
+  .sidebar {
+    width: 100%;
+    text-align: center;
+  }
+
+  .main-content {
+    padding: 10px;
+  }
+
+  .header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .add-product-btn {
+    align-self: center;
+  }
+}
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px; 
+  margin-top: 20px;
+}
+
+.pagination button {
+  padding: 10px 20px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.3s;
+}
+
+.pagination button:hover {
+  background-color: #0056b3;
+}
+
+.pagination button:disabled {
+  background-color: #c6c6c6;
+  cursor: not-allowed;
+}
+
+.pagination span {
+  font-size: 16px;
+  color: #333;
+}
+
+.pagination .loading {
+  font-size: 14px;
+  color: #333;
+  font-style: italic;
+}
+
+.add-button{
+  display: flex;
+  justify-content: right;
+  margin-right: 25px;
+}

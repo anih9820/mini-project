@@ -1,0 +1,10 @@
+.ant-table-container {
+  margin: 0 !important;
+  padding: 0 !important;
+  border-spacing: 0;
+}
+
+.ant-table-content {
+  margin: 0 !important;
+  padding: 0 !important;
+}

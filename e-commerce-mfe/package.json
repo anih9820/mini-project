@@ -1,0 +1,21 @@
+{
+  "name": "start_setup",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start:root": "cd root-mfe && npm run start",
+    "start:auth": "cd auth-mfe && npm run start",
+    "start:product": "cd product-mfe && npm run start",
+    "start:dashboard": "cd dashboard-mfe && npm run start",
+    "setup": "concurrently \"npm run start:root\" \"npm run start:auth\" \"npm run start:product\" \"npm run start:dashboard\""
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@ant-design/icons": "^5.6.1",
+    "antd": "^5.24.2",
+    "concurrently": "^9.1.2"
+  }
+}
