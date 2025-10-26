@@ -3,7 +3,7 @@ import "./product-home.css";
 import Card from "../../components/product-card/product-card";
 import Header from "../../components/header/header";
 import {
-  getAllProducts,
+  getApprovedProducts,
   getAllCategories,
 } from "../../services/product-service";
 import LoadingScreen from "../../components/loading-screen/loadingScreen";
@@ -25,8 +25,8 @@ function Home() {
   const fetchProducts = async () => {
     try {
       setLoading(true);
-      const allProducts = await getAllProducts();
 
+      const { content: allProducts = [] } = await getApprovedProducts();
       let filtered = allProducts;
 
       if (selectedCategory) {
@@ -110,7 +110,7 @@ function Home() {
             productId={product.id}
             name={product.name}
             description={product.description}
-            price={product.price} 
+            price={product.price}
             imageUrl={product.image}
             supplierId={product.supplierId}
           />

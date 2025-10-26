@@ -1,6 +1,7 @@
 import axios from "axios";
 import log from "loglevel";
 import { CartApi } from "../apiInstances/apiInstances";
+import { jwtDecode } from "jwt-decode";
 
 CartApi.interceptors.request.use(
   (config) => {
@@ -13,10 +14,23 @@ CartApi.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
+function getUserIdFromToken() {
+  const token = localStorage.getItem("token");
+  if (!token) return null;
+  const decoded = jwtDecode(token);
+  return decoded.sub;
+}
 
 export const addToCart = async (payload) => {
   try {
-    const response = await CartApi.post("/cart", payload);
+    const userId = getUserIdFromToken();
+    if (!userId) throw new Error("User not authenticated");
+    const cartPayload = {
+      userId,
+      productId: payload.productId,
+      quantity: payload.quantity,
+    };
+    const response = await CartApi.post("/", cartPayload);
     return response.data;
   } catch (error) {
     log.error("Error adding to cart:", error);
