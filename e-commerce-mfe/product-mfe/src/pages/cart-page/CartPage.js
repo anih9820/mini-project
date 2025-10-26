@@ -32,7 +32,7 @@ const CartPage = () => {
 
   const calculateTotal = () => {
     return items
-      .reduce((total, item) => total + item.quantity * item.quantityPrice, 0)
+      .reduce((total, item) => total + item.quantity * (item.price || 0), 0)
       .toFixed(2);
   };
 
@@ -118,9 +118,7 @@ const CartPage = () => {
                         />
                         <div className={style.itemDetails}>
                           <h2 className={style.itemName}>{item.name}</h2>
-                          <p className={style.itemPrice}>
-                            ${item.quantityPrice}
-                          </p>
+                          <p className={style.itemPrice}>${item.price}</p>
                         </div>
                         <div className={style.itemActions}>
                           <button

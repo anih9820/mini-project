@@ -6,6 +6,7 @@ import {
   deleteCartItem,
   clearCartByUserId,
 } from "../services/order-service";
+import { getProductById } from "../services/product-service";
 
 const initialState = {
   items: [],
@@ -18,7 +19,18 @@ const initialState = {
 export const fetchCart = createAsyncThunk("cart/fetchCart", async () => {
   const userId = localStorage.getItem("userId");
   const data = await getCartByUserId(userId);
-  return data;
+  // For each cart item, fetch product details and merge them
+  const merged = await Promise.all(
+    (data || []).map(async (item) => {
+      try {
+        const product = await getProductById(item.productId);
+        return { ...product, ...item };
+      } catch {
+        return item;
+      }
+    })
+  );
+  return merged;
 });
 
 export const addItemToCart = createAsyncThunk(
@@ -30,7 +42,7 @@ export const addItemToCart = createAsyncThunk(
       imageUrl: item.imageUrl,
       supplierId: item.supplierId,
       quantity: item.quantity,
-      quantityPrice: item.price,
+      price: item.price,
     };
     const data = await addToCart(payload);
     return data;
@@ -71,7 +83,7 @@ const cartSlice = createSlice({
         0
       );
       state.totalPrice = state.items.reduce(
-        (sum, item) => sum + item.quantity * item.quantityPrice,
+        (sum, item) => sum + item.quantity * (item.price || 0),
         0
       );
     },
@@ -92,7 +104,7 @@ const cartSlice = createSlice({
           0
         );
         state.totalPrice = state.items.reduce(
-          (sum, item) => sum + item.quantity * item.quantityPrice,
+          (sum, item) => sum + item.quantity * (item.price || 0),
           0
         );
       }
@@ -118,7 +130,7 @@ const cartSlice = createSlice({
         0
       );
       state.totalPrice = state.items.reduce(
-        (sum, item) => sum + item.quantity * item.quantityPrice,
+        (sum, item) => sum + item.quantity * (item.price || 0),
         0
       );
     },
@@ -137,7 +149,7 @@ const cartSlice = createSlice({
           0
         );
         state.totalPrice = state.items.reduce(
-          (sum, item) => sum + item.quantity * item.quantityPrice,
+          (sum, item) => sum + item.quantity * (item.price || 0),
           0
         );
       })
@@ -146,10 +158,12 @@ const cartSlice = createSlice({
         state.error = action.error.message;
       })
       .addCase(addItemToCart.fulfilled, (state, action) => {
-        state.items.push(action.payload);
-        state.totalQuantity += action.payload.quantity;
-        state.totalPrice +=
-          action.payload.quantity * action.payload.quantityPrice;
+        // Merge original product info from the action.meta.arg (the product passed to the thunk)
+        const original = action.meta && action.meta.arg ? action.meta.arg : {};
+        const merged = { ...original, ...action.payload };
+        state.items.push(merged);
+        state.totalQuantity += merged.quantity;
+        state.totalPrice += merged.quantity * (merged.price || 0);
       })
       .addCase(updateCartItemInBackend.fulfilled, (state, action) => {
         const updatedItem = action.payload;
@@ -164,7 +178,7 @@ const cartSlice = createSlice({
           0
         );
         state.totalPrice = state.items.reduce(
-          (sum, item) => sum + item.quantity * item.quantityPrice,
+          (sum, item) => sum + item.quantity * (item.price || 0),
           0
         );
       })

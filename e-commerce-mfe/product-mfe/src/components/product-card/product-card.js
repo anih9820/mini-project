@@ -3,6 +3,7 @@ import "./product-card.css";
 import { Link } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { addItemLocally } from "../../store/cartSlice";
+import { message } from "antd";
 import { ShoppingCartOutlined } from "@ant-design/icons";
 import { Button } from "antd";
 import style from "../../styles/productCard.module.css";
@@ -44,8 +45,10 @@ function Card({ productId, name, description, price, imageUrl, supplierId }) {
           quantity: 1,
         })
       );
+      message.success("Product added to cart!");
     } catch (error) {
       log.error("Error adding item to cart:", error);
+      message.error("Failed to add product to cart");
     }
   };
 
