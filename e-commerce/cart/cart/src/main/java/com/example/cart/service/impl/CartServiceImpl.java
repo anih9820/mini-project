@@ -46,7 +46,7 @@ public class CartServiceImpl implements CartService {
      * Retrieve all items in the user's cart.
      */
     @Override
-    public List<CartResponseDTO> getCartItemsByUserId(Long userId) {
+    public List<CartResponseDTO> getCartItemsByUserId(String userId) {
         try {
             List<CartItem> items = cartRepository.findByUserId(userId);
             return items.stream()
@@ -98,7 +98,7 @@ public class CartServiceImpl implements CartService {
      * Clear all items from a specific user's cart.
      */
     @Override
-    public void clearCartForUser(Long userId) {
+    public void clearCartForUser(String userId) {
         try {
             List<CartItem> items = cartRepository.findByUserId(userId);
             cartRepository.deleteAll(items);

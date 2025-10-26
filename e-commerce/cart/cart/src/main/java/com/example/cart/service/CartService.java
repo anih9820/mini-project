@@ -9,11 +9,11 @@ public interface CartService {
 
     CartResponseDTO addToCart(CartRequestDTO request);
 
-    List<CartResponseDTO> getCartItemsByUserId(Long userId);
+    List<CartResponseDTO> getCartItemsByUserId(String userId);
 
     CartResponseDTO updateCartItem(Long cartItemId, CartRequestDTO request);
 
     void removeCartItem(Long cartItemId);
 
-    void clearCartForUser(Long userId);
+    void clearCartForUser(String userId);
 }

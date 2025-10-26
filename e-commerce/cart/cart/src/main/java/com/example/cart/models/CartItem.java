@@ -19,7 +19,7 @@ public class CartItem {
     private Long id;
 
     @NotNull(message = "User ID is required")
-    private Long userId;
+    private String userId;
 
     @NotNull(message = "Product ID is required")
     private Long productId;

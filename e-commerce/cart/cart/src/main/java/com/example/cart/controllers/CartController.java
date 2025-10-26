@@ -32,7 +32,7 @@ public class CartController extends AbstractController {
      */
     @GetMapping("/{userId}")
     @Operation(summary = "Get all cart items for a user")
-    public ResponseEntity<List<CartResponseDTO>> getCartItems(@PathVariable("userId") Long userId) {
+    public ResponseEntity<List<CartResponseDTO>> getCartItems(@PathVariable("userId") String userId) {
         return successResponse(cartService.getCartItemsByUserId(userId));
     }
 
@@ -63,7 +63,7 @@ public class CartController extends AbstractController {
      */
     @DeleteMapping("/user/{userId}")
     @Operation(summary = "Clear all items from a user's cart")
-    public ResponseEntity<Void> clearUserCart(@PathVariable Long userId) {
+    public ResponseEntity<Void> clearUserCart(@PathVariable String userId) {
         cartService.clearCartForUser(userId);
         return noContent();
     }
