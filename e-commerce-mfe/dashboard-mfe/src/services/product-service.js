@@ -1,3 +1,20 @@
+export const approveProduct = async (productId) => {
+  try {
+    const response = await syscoShopBff.post(`/products/${productId}/approve`);
+    return response?.data;
+  } catch (error) {
+    handleError(error);
+  }
+};
+
+export const rejectProduct = async (productId) => {
+  try {
+    const response = await syscoShopBff.post(`/products/${productId}/reject`);
+    return response?.data;
+  } catch (error) {
+    handleError(error);
+  }
+};
 import { syscoShopBff } from "../apiInstances/apiInstance";
 import log from "loglevel";
 

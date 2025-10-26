@@ -1,14 +1,35 @@
 import React from "react";
 import { Table, Button, Space, Tooltip, Input } from "antd";
-import { EditOutlined, DeleteOutlined, SearchOutlined } from "@ant-design/icons";
+import {
+  EditOutlined,
+  DeleteOutlined,
+  SearchOutlined,
+} from "@ant-design/icons";
 import "./ProductsTable.css";
 
-const ProductsTable = ({ products, handleEditProduct, handleDeleteProduct }) => {
+const ProductsTable = ({
+  products,
+  handleEditProduct,
+  handleDeleteProduct,
+  handleApproveProduct,
+  handleRejectProduct,
+  isAdmin,
+}) => {
   if (!products || products.length === 0) {
-    return <div style={{ textAlign: "center", paddingLeft: "20px", paddingRight: "20px", fontSize: "16px" }}>No products available.</div>;
+    return (
+      <div
+        style={{
+          textAlign: "center",
+          paddingLeft: "20px",
+          paddingRight: "20px",
+          fontSize: "16px",
+        }}
+      >
+        No products available.
+      </div>
+    );
   }
 
-  // Define table columns
   const columns = [
     {
       title: "Product",
@@ -20,16 +41,30 @@ const ProductsTable = ({ products, handleEditProduct, handleDeleteProduct }) => 
           <Input
             placeholder="Search product"
             value={selectedKeys[0]}
-            onChange={(e) => setSelectedKeys(e.target.value ? [e.target.value] : [])}
+            onChange={(e) =>
+              setSelectedKeys(e.target.value ? [e.target.value] : [])
+            }
             onPressEnter={() => confirm()}
             style={{ width: 188, marginBottom: 8, display: "block" }}
           />
-          <Button onClick={() => confirm()} type="primary" icon={<SearchOutlined />} size="small" style={{ width: 90 }}>
+          <Button
+            onClick={() => confirm()}
+            type="primary"
+            icon={<SearchOutlined />}
+            size="small"
+            style={{ width: 90 }}
+          >
             Search
           </Button>
         </div>
       ),
-      onFilter: (value, record) => record.name.toLowerCase().includes(value.toLowerCase()),
+      onFilter: (value, record) =>
+        record.name.toLowerCase().includes(value.toLowerCase()),
+    },
+    {
+      title: "Supplier",
+      dataIndex: "supplierName",
+      key: "supplierName",
     },
     {
       title: "Description",
@@ -48,7 +83,19 @@ const ProductsTable = ({ products, handleEditProduct, handleDeleteProduct }) => 
       dataIndex: "stock",
       key: "stock",
       sorter: (a, b) => a.stock - b.stock,
-      render: (stock) => (stock > 0 ? stock : <span style={{ color: "red" }}>Out of Stock</span>),
+      render: (stock) =>
+        stock > 0 ? stock : <span style={{ color: "red" }}>Out of Stock</span>,
+    },
+    {
+      title: "Status",
+      dataIndex: "status",
+      key: "status",
+      render: (status) => {
+        let color = "#faad14";
+        if (status === "APPROVED") color = "#52c41a";
+        if (status === "REJECTED") color = "#f5222d";
+        return <span style={{ color, fontWeight: 600 }}>{status}</span>;
+      },
     },
     {
       title: "Actions",
@@ -71,6 +118,28 @@ const ProductsTable = ({ products, handleEditProduct, handleDeleteProduct }) => 
               onClick={() => handleDeleteProduct(product.productId)}
             />
           </Tooltip>
+          {isAdmin && product.status === "PENDING" && (
+            <>
+              <Tooltip title="Approve Product">
+                <Button
+                  type="primary"
+                  onClick={() => handleApproveProduct(product.productId)}
+                  style={{ backgroundColor: "#52c41a", borderColor: "#52c41a" }}
+                >
+                  Approve
+                </Button>
+              </Tooltip>
+              <Tooltip title="Reject Product">
+                <Button
+                  type="danger"
+                  onClick={() => handleRejectProduct(product.productId)}
+                  style={{ backgroundColor: "#f5222d", borderColor: "#f5222d" }}
+                >
+                  Reject
+                </Button>
+              </Tooltip>
+            </>
+          )}
         </Space>
       ),
     },
@@ -79,7 +148,10 @@ const ProductsTable = ({ products, handleEditProduct, handleDeleteProduct }) => 
   return (
     <div style={{ paddingRight: "20px", paddingLeft: "20px" }}>
       <Table
-        dataSource={products.map((product) => ({ ...product, key: product.productId }))}
+        dataSource={products.map((product) => ({
+          ...product,
+          key: product.productId,
+        }))}
         columns={columns}
         bordered
         pagination={{ pageSize: 5 }}
