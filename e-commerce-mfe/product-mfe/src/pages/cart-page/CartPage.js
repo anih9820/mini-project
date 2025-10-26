@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { FiMinus, FiPlus, FiTrash2 } from "react-icons/fi";
+import log from "loglevel";
 
 import {
-  addItemLocally,
   removeItemLocally,
   clearCartState,
   incrementQuantitySlice,
@@ -11,13 +11,13 @@ import {
 } from "../../store/cartSlice";
 
 import { clearCartByUserId } from "../../services/order-service";
-
-import "./CartPage.css";
 import Header from "../../components/header/header";
 import LoadingScreen from "../../components/loading-screen/loadingScreen";
 import style from "../../styles/cartPage.module.css";
 import { setUser } from "../../store/authSlice";
 import { ACTIVE_TAB } from "../../constants/constants";
+
+import "./CartPage.css";
 
 const CartPage = () => {
   const items = useSelector((state) => state.cart.items);
@@ -30,33 +30,58 @@ const CartPage = () => {
 
   const dispatch = useDispatch();
 
+  // ✅ Centralized error handler
+  const handleError = (message, err) => {
+    log.error(message, err);
+    setError("Something went wrong. Please try again later.");
+  };
+
   const calculateTotal = () => {
+    if (!Array.isArray(items)) return "0.00";
     return items
-      .reduce((total, item) => total + item.quantity * (item.price || 0), 0)
+      .reduce(
+        (total, item) => total + (item?.quantity || 0) * (item?.price || 0),
+        0
+      )
       .toFixed(2);
   };
 
   const incrementQuantity = (item) => {
-    dispatch(incrementQuantitySlice(item));
-    dispatch(
-      updateCartItemInBackend({ cartItemId: item.productId, updatedItem: item })
-    );
-  };
-
-  const decrementQuantity = (item) => {
-    if (item.quantity > 1) {
-      dispatch(removeItemLocally(item.productId));
+    try {
+      dispatch(incrementQuantitySlice(item));
       dispatch(
         updateCartItemInBackend({
           cartItemId: item.productId,
-          updatedItem: { ...item, quantity: item.quantity - 1 },
+          updatedItem: item,
         })
       );
+    } catch (err) {
+      handleError("Error incrementing item quantity:", err);
+    }
+  };
+
+  const decrementQuantity = (item) => {
+    try {
+      if (item.quantity > 1) {
+        dispatch(removeItemLocally(item.productId));
+        dispatch(
+          updateCartItemInBackend({
+            cartItemId: item.productId,
+            updatedItem: { ...item, quantity: item.quantity - 1 },
+          })
+        );
+      }
+    } catch (err) {
+      handleError("Error decrementing item quantity:", err);
     }
   };
 
   const removeItemFromCart = (id) => {
-    dispatch(removeItemLocally(id));
+    try {
+      dispatch(removeItemLocally(id));
+    } catch (err) {
+      handleError("Error removing item from cart:", err);
+    }
   };
 
   const handlePlaceOrder = async () => {
@@ -65,21 +90,29 @@ const CartPage = () => {
       dispatch(clearCartState());
       await clearCartByUserId(userId);
       dispatch(setUser({ userId, cartId: "mock-order-id" }));
-    } catch (error) {
-      setError(error.message);
+    } catch (err) {
+      handleError("Error placing order:", err);
     } finally {
       setLoading(false);
     }
   };
 
-  const handleClearCart = () => {
-    dispatch(clearCartState());
-    clearCartByUserId(userId);
+  const handleClearCart = async () => {
+    try {
+      dispatch(clearCartState());
+      await clearCartByUserId(userId);
+    } catch (err) {
+      handleError("Error clearing cart:", err);
+    }
   };
 
-  const handleTabChange = (tab) => {
-    setActiveTab(tab);
-  };
+  const handleTabChange = (tab) => setActiveTab(tab);
+
+  // 🧩 Defensive guard — ensure items is always iterable
+  if (!Array.isArray(items)) {
+    log.error("Cart items state is invalid:", items);
+    return <div className={style.errorBox}>Cart failed to load.</div>;
+  }
 
   if (status === "loading" || loading) return <LoadingScreen />;
 
@@ -90,6 +123,8 @@ const CartPage = () => {
       <div className={style.cartPage}>
         <div className={style.container}>
           <h1 className={style.title}>Your Cart</h1>
+
+          {error && <div className={style.errorMsg}>{error}</div>}
 
           <div className={style.tabs}>
             <button
@@ -109,42 +144,60 @@ const CartPage = () => {
                   <div className={style.emptyCart}>Your cart is empty</div>
                 ) : (
                   <div className={style.cartItems}>
-                    {items.map((item) => (
-                      <div key={item.productId} className={style.cartItem}>
-                        <img
-                          src={item.imageUrl}
-                          alt={item.name}
-                          className={style.itemImage}
-                        />
-                        <div className={style.itemDetails}>
-                          <h2 className={style.itemName}>{item.name}</h2>
-                          <p className={style.itemPrice}>${item.price}</p>
+                    {items.map((item, index) => {
+                      if (!item) {
+                        log.warn(
+                          "Skipping undefined cart item at index:",
+                          index
+                        );
+                        return null;
+                      }
+
+                      const safeName = item.name || "Unnamed Product";
+                      const safeImage =
+                        item.imageUrl ||
+                        "https://via.placeholder.com/150?text=No+Image";
+                      const safePrice = item.price ?? 0;
+                      const safeQty = item.quantity ?? 0;
+
+                      return (
+                        <div
+                          key={item.productId || index}
+                          className={style.cartItem}
+                        >
+                          <img
+                            src={safeImage}
+                            alt={safeName}
+                            className={style.itemImage}
+                          />
+                          <div className={style.itemDetails}>
+                            <h2 className={style.itemName}>{safeName}</h2>
+                            <p className={style.itemPrice}>${safePrice}</p>
+                          </div>
+                          <div className={style.itemActions}>
+                            <button
+                              onClick={() => decrementQuantity(item)}
+                              className={style.quantityBtn}
+                            >
+                              <FiMinus />
+                            </button>
+                            <span className={style.quantity}>{safeQty}</span>
+                            <button
+                              onClick={() => incrementQuantity(item)}
+                              className={style.quantityBtn}
+                            >
+                              <FiPlus />
+                            </button>
+                            <button
+                              onClick={() => removeItemFromCart(item.productId)}
+                              className={style.removeBtn}
+                            >
+                              <FiTrash2 />
+                            </button>
+                          </div>
                         </div>
-                        <div className={style.itemActions}>
-                          <button
-                            onClick={() => decrementQuantity(item)}
-                            className={style.quantityBtn}
-                          >
-                            <FiMinus />
-                          </button>
-                          <span className={style.quantity}>
-                            {item.quantity}
-                          </span>
-                          <button
-                            onClick={() => incrementQuantity(item)}
-                            className={style.quantityBtn}
-                          >
-                            <FiPlus />
-                          </button>
-                          <button
-                            onClick={() => removeItemFromCart(item.productId)}
-                            className={style.removeBtn}
-                          >
-                            <FiTrash2 />
-                          </button>
-                        </div>
-                      </div>
-                    ))}
+                      );
+                    })}
                   </div>
                 )}
               </div>
