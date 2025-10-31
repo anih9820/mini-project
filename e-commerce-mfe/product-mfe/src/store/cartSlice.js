@@ -171,7 +171,11 @@ const cartSlice = createSlice({
           (item) => item.id === updatedItem.id
         );
         if (index !== -1) {
-          state.items[index] = updatedItem;
+          // Merge updated fields but keep product info
+          state.items[index] = {
+            ...state.items[index], // keep product info
+            ...updatedItem, // update quantity, price, etc.
+          };
         }
         state.totalQuantity = state.items.reduce(
           (sum, item) => sum + item.quantity,

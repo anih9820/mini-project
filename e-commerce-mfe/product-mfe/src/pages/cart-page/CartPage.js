@@ -46,35 +46,51 @@ const CartPage = () => {
       .toFixed(2);
   };
 
-  const incrementQuantity = (item) => {
-    try {
-      dispatch(incrementQuantitySlice(item));
+const incrementQuantity = (item) => {
+  try {
+    // Build a full payload including required fields
+    const updatedPayload = {
+      userId, // from Redux
+      productId: item.productId || item.id, // backend needs this
+      quantity: item.quantity + 1,
+      price: item.price,
+    };
+
+    dispatch(incrementQuantitySlice(item));
+    dispatch(
+      updateCartItemInBackend({
+        cartItemId: item.id,
+        updatedItem: updatedPayload,
+      })
+    );
+  } catch (err) {
+    handleError("Error incrementing item quantity:", err);
+  }
+};
+
+const decrementQuantity = (item) => {
+  try {
+    if (item.quantity > 1) {
+      const updatedPayload = {
+        userId,
+        productId: item.productId || item.id,
+        quantity: item.quantity - 1,
+        price: item.price,
+      };
+
+      dispatch(removeItemLocally(item.id));
       dispatch(
         updateCartItemInBackend({
-          cartItemId: item.productId,
-          updatedItem: item,
+          cartItemId: item.id,
+          updatedItem: updatedPayload,
         })
       );
-    } catch (err) {
-      handleError("Error incrementing item quantity:", err);
     }
-  };
+  } catch (err) {
+    handleError("Error decrementing item quantity:", err);
+  }
+};
 
-  const decrementQuantity = (item) => {
-    try {
-      if (item.quantity > 1) {
-        dispatch(removeItemLocally(item.productId));
-        dispatch(
-          updateCartItemInBackend({
-            cartItemId: item.productId,
-            updatedItem: { ...item, quantity: item.quantity - 1 },
-          })
-        );
-      }
-    } catch (err) {
-      handleError("Error decrementing item quantity:", err);
-    }
-  };
 
   const removeItemFromCart = (id) => {
     try {

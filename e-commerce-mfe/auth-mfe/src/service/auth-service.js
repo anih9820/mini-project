@@ -1,5 +1,6 @@
 import { Amplify, Auth } from "aws-amplify";
 import { amplifyConfig } from "../config/amplifyConfig";
+import log from "loglevel";
 
 Amplify.configure(amplifyConfig);
 

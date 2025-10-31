@@ -16,28 +16,31 @@ const ProductForm = ({ editProduct, setEditProduct, handleUpdateProduct }) => {
   }, [editProduct, form]);
 
   const onFinish = (values) => {
-    const value = {
-      ...values,
-      imageUrl: "https://scitechdaily.com/images/Sliced-Watermelon.jpg"
-
-    }
-    handleUpdateProduct(value);
+    const payload = {
+      name: values.name,
+      category: values.category,
+      price: values.price,
+      description: values.description,
+      stock: values.stock,
+      image:
+        fileList.length > 0
+          ? URL.createObjectURL(fileList[0].originFileObj)
+          : "https://cdn.example.com/products/ecosteel-bottle-750ml.jpg", // fallback
+      supplierName: values.supplierName,
+    };
+  console.log("🔍 Submitting product payload:", payload);
+    handleUpdateProduct(payload);
     setEditProduct(null);
   };
 
   return (
     <Modal
-      title={editProduct?.productId ? "Edit Product" : "Add Product"}
+      title={editProduct ? "Edit Product" : "Add Product"}
       open={!!editProduct}
       onCancel={() => setEditProduct(null)}
       footer={null}
     >
-      <Form
-        form={form}
-        layout="vertical"
-        onFinish={onFinish}
-        initialValues={editProduct}
-      >
+      <Form form={form} layout="vertical" onFinish={onFinish}>
         <Form.Item
           label="Product Name"
           name="name"
@@ -47,17 +50,46 @@ const ProductForm = ({ editProduct, setEditProduct, handleUpdateProduct }) => {
         </Form.Item>
 
         <Form.Item
+          label="Category"
+          name="category"
+          rules={[{ required: true, message: "Please select a category" }]}
+        >
+          <Select placeholder="Select category">
+            <Option value="Fresh Produce">Fresh Produce</Option>
+            <Option value="Dairy & Eggs">Dairy & Eggs</Option>
+            <Option value="Meat & Poultry">Meat & Poultry</Option>
+            <Option value="Seafood">Seafood</Option>
+            <Option value="Frozen Foods">Frozen Foods</Option>
+            <Option value="Bakery & Desserts">Bakery & Desserts</Option>
+            <Option value="Beverages">Beverages</Option>
+            <Option value="Dry Goods & Pantry">Dry Goods & Pantry</Option>
+            <Option value="Condiments & Sauces">Condiments & Sauces</Option>
+            <Option value="Snacks & Appetizers">Snacks & Appetizers</Option>
+            <Option value="Canned & Packaged Goods">
+              Canned & Packaged Goods
+            </Option>
+          </Select>
+        </Form.Item>
+
+        <Form.Item
           label="Price ($)"
           name="price"
-          rules={[{ required: true, type: "number", min: 0, message: "Enter a valid price" }]}
+          rules={[
+            {
+              required: true,
+              type: "number",
+              min: 0,
+              message: "Enter a valid price",
+            },
+          ]}
         >
           <InputNumber style={{ width: "100%" }} min={0} step={0.01} />
         </Form.Item>
 
         <Form.Item
           label="Description"
-          name="productDescription"
-          rules={[{ required: true, message: "Please enter the product description" }]}
+          name="description"
+          rules={[{ required: true, message: "Please enter a description" }]}
         >
           <TextArea rows={3} placeholder="Enter product description" />
         </Form.Item>
@@ -65,46 +97,44 @@ const ProductForm = ({ editProduct, setEditProduct, handleUpdateProduct }) => {
         <Form.Item
           label="Stock Quantity"
           name="stock"
-          rules={[{ required: true, type: "number", min: 0, message: "Enter a valid stock quantity" }]}
+          rules={[
+            {
+              required: true,
+              type: "number",
+              min: 0,
+              message: "Enter a valid stock quantity",
+            },
+          ]}
         >
           <InputNumber style={{ width: "100%" }} min={0} />
         </Form.Item>
 
         <Form.Item
-          label="Category"
-          name="categoryName"
-          rules={[{ required: true, message: "Please select a category" }]}
+          label="Supplier Name"
+          name="supplierName"
+          rules={[
+            { required: true, message: "Please enter the supplier name" },
+          ]}
         >
-          <Select placeholder="Select category">
-            <Option value="Fruits">Fruits</Option>
-            <Option value="Clothing">Clothing</Option>
-            <Option value="Books">Books</Option>
-            <Option value="Home">Home</Option>
-          </Select>
+          <Input placeholder="Enter supplier name" />
         </Form.Item>
 
-        {/* <Form.Item
-          label="Image URL"
-          name="imageUrl"
-          rules={[{ required: true, message: "Please enter an image URL" }]}
-        >
-          <Input placeholder="Enter image URL" />
-        </Form.Item> */}
-
-        <Form.Item>
+        <Form.Item label="Product Image">
           <Upload
-            beforeUpload={() => false} // Prevent automatic upload
+            beforeUpload={() => false}
             fileList={fileList}
             onChange={({ fileList }) => setFileList(fileList)}
             listType="picture"
           >
-            <Button icon={<UploadOutlined />}>Upload Product Image</Button>
+            <Button icon={<UploadOutlined />}>Upload Image</Button>
           </Upload>
         </Form.Item>
 
         <div style={{ display: "flex", justifyContent: "space-between" }}>
           <Button onClick={() => setEditProduct(null)}>Cancel</Button>
-          <Button type="primary" htmlType="submit">Save</Button>
+          <Button type="primary" htmlType="submit">
+            Save
+          </Button>
         </div>
       </Form>
     </Modal>

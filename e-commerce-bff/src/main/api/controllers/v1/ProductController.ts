@@ -63,6 +63,7 @@ const getProductById: RequestHandler = async (req, res) => {
 
 const createProduct: RequestHandler = async (req, res) => {
   try {
+    logger.info("🟢 Forwarding product data to backend:", req.body);
     const responseData = await ProductService.createProduct(req.body);
     res.status(constants.HTTP_STATUS_CODES.CREATED).send(responseData);
   } catch (error: any) {

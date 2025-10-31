@@ -20,6 +20,13 @@ const SignUp = () => {
   const [apiError, setApiError] = useState("");
   const navigate = useNavigate();
 
+  const ROLES = {
+    CUSTOMER: "CUSTOMER",
+    VENDOR: "VENDOR",
+    DATA_STEWARD: "ADMIN", 
+  };
+
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
